@@ -1,0 +1,2 @@
+This code runs client side in browser, threejs is imported in the HTML so dont include it in any JS/TS files.
+Prefer Typescript for new code, but make sure imports and exports are properly handled.

@@ -1,0 +1,16 @@
+{
+    "dependencies": {
+      "typescript": "^5.8.2"
+    },
+    "devDependencies": {
+      "gh-pages": "^6.3.0",
+      "vite": "^6.2.0"
+    },
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "preview": "vite preview",
+      "deploy": "gh-pages -d dist"
+    }
+  }
+  
