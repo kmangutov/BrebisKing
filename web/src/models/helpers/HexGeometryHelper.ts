@@ -6,9 +6,9 @@ export class HexGeometryHelper {
     private scene: THREE.Scene;
     private debugViz: DebugVisualization;
 
-    constructor(scene: THREE.Scene) {
+    constructor(scene: THREE.Scene, isDebugMode: boolean = false) {
         this.scene = scene;
-        this.debugViz = new DebugVisualization(scene);
+        this.debugViz = new DebugVisualization(scene, isDebugMode);
     }
 
     clear() {
@@ -44,5 +44,9 @@ export class HexGeometryHelper {
 
     placeHouseAtRoadStart(position: THREE.Vector3) {
         return this.debugViz.placeHouseAtRoadStart(position);
+    }
+
+    setDebugMode(enabled: boolean) {
+        this.debugViz.setDebugMode(enabled);
     }
 } 

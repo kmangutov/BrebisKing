@@ -20,10 +20,14 @@ export class PlacementManager {
     private hexTiles: HexTile[];
     private geometryHelper: HexGeometryHelper;
 
-    constructor(scene: THREE.Scene, hexTiles: HexTile[]) {
+    constructor(scene: THREE.Scene, hexTiles: HexTile[], isDebugMode: boolean = false) {
         this.scene = scene;
         this.hexTiles = hexTiles;
-        this.geometryHelper = new HexGeometryHelper(scene);
+        this.geometryHelper = new HexGeometryHelper(scene, isDebugMode);
+    }
+
+    setDebugMode(enabled: boolean) {
+        this.geometryHelper.setDebugMode(enabled);
     }
 
     private getHexCorners(center: THREE.Vector3, radius: number): THREE.Vector3[] {
