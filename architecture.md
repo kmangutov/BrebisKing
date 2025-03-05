@@ -1,1 +1,0 @@
-HTML frontend goes in web/ directory including npm/tsc/vite/etc

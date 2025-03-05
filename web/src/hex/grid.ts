@@ -12,6 +12,10 @@ export class HexGrid {
         this.createGrid();
     }
 
+    getTiles(): HexTile[] {
+        return this.hexTiles;
+    }
+
     private createLabelContainer(container: HTMLElement) {
         this.labelContainer.id = 'dice-labels';
         this.labelContainer.style.position = 'absolute';

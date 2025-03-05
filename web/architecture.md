@@ -11,8 +11,12 @@ Directory Structure:
    - camera.ts - Camera and renderer setup
    - debug.ts - Debug utilities (axes helper, etc.)
    - lighting.ts - Scene lighting setup
-6. src/textures.ts - Generates hex tile textures for resources, roads, cities, hotels, etc.
-7. src/controls.ts - Mouse input and UI
+6. src/models/ - 3D model definitions and placement logic
+   - house.ts - House model definition
+   - road.ts - Road model definition
+   - placement.ts - Logic for placing models in the world
+7. src/textures.ts - Generates hex tile textures for resources, roads, cities, hotels, etc.
+8. src/controls.ts - Mouse input and UI
 
 Component Responsibilities:
 - World: Main orchestrator that coordinates all other components
@@ -20,3 +24,6 @@ Component Responsibilities:
 - CameraSetup: Handles camera, renderers, and orbit controls
 - DebugUtils: Provides debugging tools like the 3D axes helper
 - LightingSetup: Manages scene lighting
+- PlacementManager: Handles placement of buildings and roads at valid locations
+- HouseModel: Defines the 3D model for houses
+- RoadModel: Defines the 3D model for roads
