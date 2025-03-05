@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 
 export type ResourceType = 'rock' | 'sheep' | 'wood' | 'brick' | 'stone' | 'wheat';
 
@@ -23,10 +24,11 @@ export class World {
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
     private renderer: THREE.WebGLRenderer;
+    private labelRenderer: CSS2DRenderer;
     private controls: OrbitControls;
     private hexTiles: HexTile[] = [];
     private container: HTMLElement;
-    private axesHelper: THREE.AxesHelper;
+    private axesHelper: THREE.Group = new THREE.Group();
 
     constructor(container: HTMLElement) {
         this.container = container;
@@ -34,10 +36,6 @@ export class World {
         // Setup scene
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x87CEEB); // Sky blue background
-
-        // Add axes helper
-        this.axesHelper = new THREE.AxesHelper(5); // The parameter defines the length of the axes
-        this.scene.add(this.axesHelper);
 
         // Setup camera
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -49,10 +47,21 @@ export class World {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(this.renderer.domElement);
 
+        // Setup CSS2D renderer for labels
+        this.labelRenderer = new CSS2DRenderer();
+        this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        this.labelRenderer.domElement.style.position = 'absolute';
+        this.labelRenderer.domElement.style.top = '0';
+        this.labelRenderer.domElement.style.pointerEvents = 'none';
+        container.appendChild(this.labelRenderer.domElement);
+
         // Setup controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
+
+        // Create custom axes helper
+        this.createCustomAxesHelper();
 
         // Create hex grid
         this.createHexGrid();
@@ -63,6 +72,65 @@ export class World {
 
         // Start animation loop
         this.animate();
+    }
+
+    private createCustomAxesHelper() {
+        // Create a group to hold our custom axes
+        this.axesHelper = new THREE.Group();
+        
+        // Define axis length and thickness
+        const axisLength = 1.5;
+        const axisThickness = 0.06;
+        
+        // Create X axis (red)
+        const xAxis = new THREE.Mesh(
+            new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength, 8),
+            new THREE.MeshBasicMaterial({ color: 0xff0000 })
+        );
+        xAxis.rotation.z = -Math.PI / 2;
+        xAxis.position.x = axisLength / 2;
+        this.axesHelper.add(xAxis);
+        
+        // Create Y axis (green)
+        const yAxis = new THREE.Mesh(
+            new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength, 8),
+            new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+        );
+        yAxis.position.y = axisLength / 2;
+        this.axesHelper.add(yAxis);
+        
+        // Create Z axis (blue)
+        const zAxis = new THREE.Mesh(
+            new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength, 8),
+            new THREE.MeshBasicMaterial({ color: 0x0000ff })
+        );
+        zAxis.rotation.x = Math.PI / 2;
+        zAxis.position.z = axisLength / 2;
+        this.axesHelper.add(zAxis);
+        
+        // Add labels
+        this.addAxisLabel('X', axisLength, 0, 0, 'red');
+        this.addAxisLabel('Y', 0, axisLength, 0, 'green');
+        this.addAxisLabel('Z', 0, 0, axisLength, 'blue');
+        
+        // Position in upper left corner of scene
+        this.axesHelper.position.set(-5, 3, -5);
+        
+        // Add to scene
+        this.scene.add(this.axesHelper);
+    }
+    
+    private addAxisLabel(text: string, x: number, y: number, z: number, color: string) {
+        const div = document.createElement('div');
+        div.className = 'axis-label';
+        div.textContent = text;
+        div.style.color = color;
+        div.style.fontWeight = 'bold';
+        div.style.fontSize = '16px';
+        
+        const label = new CSS2DObject(div);
+        label.position.set(x, y, z);
+        this.axesHelper.add(label);
     }
 
     private createHexTile(resource: ResourceType, diceNumber: number, x: number, z: number): HexTile {
@@ -178,12 +246,14 @@ export class World {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
     }
 
     private animate() {
         requestAnimationFrame(this.animate.bind(this));
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
+        this.labelRenderer.render(this.scene, this.camera);
         this.updateDiceLabels();
     }
 } 
