@@ -78,6 +78,10 @@ export class PlacementManager {
         road.rotation.y = angle;
 
         this.scene.add(road);
+
+        // Place house at road start
+        this.geometryHelper.placeHouseAtRoadStart(randomSide.start);
+
         console.log('Road placed along hex side:', {
             start: randomSide.start,
             end: randomSide.end,
