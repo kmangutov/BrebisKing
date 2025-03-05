@@ -1,0 +1,22 @@
+# Node modules (don't commit dependencies, but keep package-lock.json)
+node_modules/
+
+# Compiled TypeScript output
+dist/
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor/IDE files
+.vscode/
+.idea/
+.DS_Store
+
+# Environment files (if any)
+.env
+.env.local
+.env.*.local
