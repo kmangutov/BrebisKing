@@ -26,6 +26,7 @@ export class World {
     private controls: OrbitControls;
     private hexTiles: HexTile[] = [];
     private container: HTMLElement;
+    private axesHelper: THREE.AxesHelper;
 
     constructor(container: HTMLElement) {
         this.container = container;
@@ -33,6 +34,10 @@ export class World {
         // Setup scene
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x87CEEB); // Sky blue background
+
+        // Add axes helper
+        this.axesHelper = new THREE.AxesHelper(5); // The parameter defines the length of the axes
+        this.scene.add(this.axesHelper);
 
         // Setup camera
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -69,10 +74,11 @@ export class World {
         });
         const mesh = new THREE.Mesh(hexGeometry, material);
         
-        // Position the hex tile
+        // Position the hex tile on the XZ plane with flat faces pointing up
         mesh.position.set(x, 0, z);
-        mesh.rotation.x = Math.PI / 2;
-
+        // Rotate the cylinder so its flat faces point up/down along the Y axis
+        mesh.rotation.x = 0; // No rotation needed - cylinder's flat faces are already along the Y axis
+        
         this.scene.add(mesh);
         return { 
             mesh, 
@@ -143,10 +149,14 @@ export class World {
         directionalLight.position.set(10, 10, 10);
         this.scene.add(directionalLight);
 
-        // Create a 3-2-3-2-3 pattern of hexes
+        // Create a 3-4-5-4-3 pattern of hexes
         const resources: ResourceType[] = ['rock', 'sheep', 'wood', 'brick', 'stone', 'wheat'];
         const rows = [3, 4, 5, 4, 3];
         let hexIndex = 0;
+        
+        // Define hex dimensions for proper spacing
+        const hexWidth = 1.732; // √3 - distance between centers of adjacent hexes
+        const hexVerticalSpacing = 1.5; // Vertical distance between rows
         
         for (let row = 0; row < rows.length; row++) {
             const hexesInRow = rows[row];
@@ -154,9 +164,9 @@ export class World {
                 const resource = resources[Math.floor(Math.random() * resources.length)];
                 const diceNumber = Math.floor(Math.random() * 11) + 2; // 2-12
                 
-                // Calculate hex position
-                const x = (col - (hexesInRow - 1) / 2) * 1.732; // 1.732 = √3
-                const z = row * 1.5;
+                // Calculate hex position with proper spacing
+                const x = (col - (hexesInRow - 1) / 2) * hexWidth;
+                const z = row * hexVerticalSpacing;
                 
                 this.hexTiles.push(this.createHexTile(resource, diceNumber, x, z));
                 hexIndex++;
